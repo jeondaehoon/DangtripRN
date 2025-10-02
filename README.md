@@ -1,73 +1,145 @@
-반려견과 함께하는 라이프스타일 앱. 지도(카페/병원), 산책(개인/그룹), 커뮤니티, 쇼핑/쿠폰, 채팅, 프로필/인증 등 전반 기능을 React Native로 구현했습니다.
+# DangTrip
 
-### 1) 기술 스택
-- **React Native 0.80 / React 19**: 단일 코드베이스로 iOS/Android 동시 대응을 위해 선택
-- **Navigation(@react-navigation)**: 스택 기반 전환과 딥링크 확장을 고려한 표준 라우팅
-- **네트워킹(axios)**: 인터셉터/에러 처리 일원화와 토큰 기반 호출을 단순화
-- **지도/위치(react-native-maps, geolocation-service)**: 산책/장소 기능의 핵심, 기기 위치 권한과 성능 고려
-- **실시간( @stomp/stompjs, sockjs-client )**: 채팅/알림 등 실시간 상호작용 필요
-- **UI(react-native-vector-icons, safe-area-context, screens)**: 안정적 UI 구성과 성능 최적화
-- **미디어(webview, image-picker, youtube-iframe)**: 외부 콘텐츠/이미지 업로드/영상 임베드 대응
-- **형상/Jest/ESLint/Prettier/TypeScript**: 일관된 품질과 정적 타이핑으로 유지보수성 강화
+> 반려견 동반 산책/장소/커뮤니티/쇼핑을 한 곳에서 제공하는 모바일 앱 (React Native)
 
-### 2) 구현 기능 요약
-- 지도 화면: 카페/병원 마커, 사용자 위치 기반 탐색
-- 산책: 근처/인기/추천/야간 산책로 목록, 상세, 산책 기록/그룹 산책
-- 커뮤니티: 게시글 작성/상세/내 커뮤니티 관리
-- 쇼핑: 상품 목록/상세/장바구니/주문, 쿠폰함 및 내 쿠폰
-- 인증/프로필: 로그인/회원가입, 내 정보 수정(주소/연락처/프로필/로그인 정보)
-- 채팅/문의: 1:1 문의 및 게시글 상세 대화
-- 날씨 카드: 현재 기온/습도/하늘/강수 상태 카드 Carousel
+DangTrip은 반려견과 함께하는 산책, 장소 탐색(카페/병원), 커뮤니티, 쇼핑/쿠폰, 채팅까지 한 번에 즐길 수 있는 크로스플랫폼 앱입니다.
 
-### 3) 사용 API 및 오픈 API
-- **백엔드 API**: `src/util/api.js`의 헬퍼(`get/post/put/delete*WithToken`)로 일원화
-  - BASE: `API_BASE`(예: `http://192.168.45.62:8080`) — 환경/에뮬레이터별 주소 분리
-  - 이유: 중복 제거, 오류 로깅 통일, 토큰 주입 표준화
-- **기상청 단기예보 오픈 API(VilageFcstInfoService 2.0)**
-  - 파일: `src/util/WeatherCarousel.js`, `src/util/getKmaDateTime.js`
-  - 이유: 산책 전 날씨/강수/하늘 상태를 즉시 제공해 사용자 의사결정 지원
-  - 특징: 발표시간 보정 로직으로 10분 지연 구간 데이터 공백 대응
-- **지도/위치**: 기기 위치 권한과 지도 렌더링(`react-native-maps`)으로 주변 장소/산책로 경험 제공
+## 기술 스택
 
-#### 오픈 API 요약
-- Google Maps Platform: 지도 렌더/마커/카메라(키 필요) — 안정적 성능과 풍부한 지도 인터랙션
-- 기상청 단기예보: 현재/예보 데이터로 산책 의사결정 지원 — 발표시간 보정 적용
-- 다음 우편번호(react-native-daum-postcode): 주소 검색/자동완성 — 가입·프로필 UX 개선
+### Backend / API 연동
+- 사내/개발 백엔드 REST API (토큰 기반 인증)
+- Axios 기반 공통 API 헬퍼(`src/util/api.js`)
 
-### 4) 프로젝트 구조
+### Mobile (Frontend)
+- React Native 0.80, React 19
+- Navigation: `@react-navigation/native`, `@react-navigation/native-stack`
+- Maps/Location: `react-native-maps`, `react-native-geolocation-service`
+- Realtime: `@stomp/stompjs`, `sockjs-client`
+- Media: `react-native-image-picker`, `react-native-webview`, `react-native-youtube-iframe`
+- UI: `react-native-vector-icons`, `react-native-safe-area-context`, `react-native-screens`
+- Address: `react-native-daum-postcode`
+
+### Development
+- TypeScript, Jest, ESLint, Prettier
+- Metro, Android Studio, Xcode
+
+## 구현 기능
+
+### 1. 사용자 인증/프로필
+- 로그인/회원가입, 토큰 기반 인증
+- 내 정보 수정(주소/연락처/프로필/로그인 정보)
+
+### 2. 지도/장소
+- 카페/동물병원 목록 및 상세, 사용자 현재 위치 기반 탐색
+- 지도 마커 및 카메라 이동, 장소 상세 화면 연계
+
+### 3. 산책
+- 근처/인기/추천/야간 산책로 목록 및 상세
+- 산책 기록, 그룹 산책 참여/상세
+
+### 4. 커뮤니티/채팅
+- 게시글 작성/상세, 내 커뮤니티 관리
+- 1:1 문의/채팅 (STOMP 기반)
+
+### 5. 쇼핑/쿠폰
+- 상품 목록/상세, 장바구니, 주문, 쿠폰함
+
+### 6. 날씨/유틸
+- 기상청 단기예보 기반 현재 기온/습도/하늘/강수 카드 Carousel
+- 발표시간 보정 로직(`src/util/getKmaDateTime.js`)으로 데이터 공백 시간 대응
+
+## 사용 API 및 오픈 API
+
+### 백엔드 API
+- BASE: `API_BASE` (예: `http://192.168.45.62:8080`) – 환경/에뮬레이터별 주소 분리
+- 공통 헬퍼: `get/post/put/delete` + `*WithToken`로 표준화, 오류 로깅/토큰 주입 일관성
+
+### 오픈 API
+- Google Maps Platform (Maps SDK for Android/iOS)
+  - 지도 렌더링/마커/카메라 이동
+  - 이유: 안정적 성능과 풍부한 지도 인터랙션, 크로스플랫폼 일관성
+- 기상청 단기예보(공공데이터포털)
+  - 현재/예보 데이터로 산책 의사결정 지원
+  - 이유: 공공 데이터 기반 신뢰성과 지역성
+- 다음 우편번호(react-native-daum-postcode)
+  - 주소 검색/자동완성으로 가입/프로필 UX 개선
+  - 이유: 오입력 방지, 빠른 주소 입력 경험
+
+## 프로젝트 특징
+
+### 아키텍처/품질
+- API 호출 헬퍼 일원화(토큰/에러 처리 표준화)
+- TypeScript 도입으로 정적 타이핑 강화(점진적)
+- 리스트/카드 UI 성능 최적화(가로 스크롤, 페이징, 이미지 플레이스홀더)
+
+### 도메인 특화
+- 산책 전 의사결정 보조(기상청 발표시간 보정)
+- 플랫폼별 이미지 URL 분기(`Platform.OS`)로 네트워크 경로 안정화
+
+## 프로젝트 구조
+
 ```
 src/
-  screens/      # 화면 단위(산책/그룹/커뮤니티/쇼핑/마이/병원/카페 등)
-  util/         # API 헬퍼, 시간/날씨 유틸
-  data/         # 정적 리소스(JSON)
-assets/         # 이미지/아이콘/폰트
-android, ios    # 네이티브 프로젝트
+  screens/              # Walk/WalkGroup/Cafe/Hospital/Community/Shopping/My 등 화면
+  util/                 # api.js, getKmaDateTime.js, timeAgo.js 등 유틸
+  data/                 # locations.json, MapStyle.json 등 정적 데이터
+assets/                 # 이미지/아이콘/폰트
+android/ ios/           # 네이티브 프로젝트
 ```
 
-### 5) 실행 방법
+## 시작하기
+
+### 필수 요구사항
+- Node.js 18+
+- Android Studio / Xcode
+- Java JDK, Watchman(권장)
+
+### 설치 및 실행
+
+1) 의존성 설치
 ```
 npm install
+```
+
+2) 개발 서버(메트로) 실행
+```
 npm start
+```
+
+3) Android 실행
+```
 npm run android
-# iOS
+```
+
+4) iOS 실행
+```
 cd ios && bundle install && bundle exec pod install && cd ..
 npm run ios
 ```
 
-### 6) 환경 설정 메모
-- `src/util/api.js`의 `API_BASE`를 개발/배포 환경에 맞게 변경
+## 환경 설정
+- `src/util/api.js`의 `API_BASE`를 환경에 맞게 설정
   - Android 에뮬레이터: `http://10.0.2.2:<port>`
   - iOS 시뮬레이터: `http://localhost:<port>` 또는 Mac LAN IP
-- 위치/카메라 등 권한 문자열: `AndroidManifest.xml`, `Info.plist`에 추가
-- 지도 키(Google Maps 등) 플랫폼별 설정 필요
+- 권한 문자열: `AndroidManifest.xml`, `Info.plist` 점검
+- Google Maps API Key 플랫폼별 등록 필요
 
-### 7) 프로젝트 특징
-- API 헬퍼 일원화로 호출부 단순화, 에러 로깅 일관성
-- 날씨 발표시간 보정으로 오픈 API 현실 제약 대응
-- 리스트/카드 UI 성능 최적화(가로 스크롤, 페이징, 이미지 플레이스홀더)
-- 토큰 기반 보호 API 접근과 이미지 URL 빌드 분기(`Platform.OS`)
+## 로드맵
 
-### 8) 로드맵
-- .env 기반 환경변수 적용 및 빌드 시 주입
-- STOMP 기반 알림/실시간 업데이트 고도화
-- E2E 테스트(Detox) 및 성능 프로파일링 추가
+### Phase 1: 기본 기능 고도화
+- [x] 인증/프로필, 지도/산책, 커뮤니티/채팅, 쇼핑/쿠폰 기본 기능
+- [x] 기상청 발표시간 보정 로직 반영
+
+### Phase 2: 확장
+- [ ] .env 기반 환경변수 도입 및 빌드 주입
+- [ ] STOMP 실시간 알림/업데이트 강화
+- [ ] E2E 테스트(Detox), 성능 프로파일링
+
+### Phase 3: 고급 기능
+- [ ] 개인화 추천(위치/이력 기반)
+- [ ] 오프라인 모드/캐싱 전략
+- [ ] 접근성 개선(스크린리더/동적 폰트)
+
+## 라이선스
+
+본 리포지토리의 라이선스가 별도 명시되지 않은 경우, 개인/학습 용도로만 사용하시기 바랍니다. 필요 시 `LICENSE` 파일을 추가해 주세요.
